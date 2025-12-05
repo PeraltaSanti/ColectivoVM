@@ -1,93 +1,95 @@
 /* Estilos generales */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f0f2f5;
     color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 header {
     background-color: #005a9c;
     color: white;
-    padding: 15px;
+    padding: 20px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-main {
-    padding: 15px;
-    max-width: 600px; /* Ancho máximo ideal para celular */
-    margin: 0 auto;
+h1 {
+    margin: 0;
+    font-size: 22px;
 }
 
-/* Sección del Buscador Inteligente */
+main {
+    flex: 1; /* Ocupa el resto de la pantalla */
+    padding: 20px;
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: flex-start; /* Alinea arriba */
+}
+
+/* Tarjeta principal */
 .buscador-container {
     background-color: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 30px 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     text-align: center;
-    margin-bottom: 20px;
+    width: 100%;
+    max-width: 400px; /* Ancho máximo para que no se estire en PC */
 }
 
 label {
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
     display: block;
-    margin-bottom: 10px;
-    color: #555;
+    margin-bottom: 15px;
+    color: #444;
 }
 
 select {
     width: 100%;
-    padding: 12px;
+    padding: 15px;
     font-size: 16px;
     border: 2px solid #005a9c;
-    border-radius: 8px;
-    background-color: white;
-    margin-bottom: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+    margin-bottom: 30px;
+    outline: none;
+    cursor: pointer;
 }
 
-/* El recuadro del resultado */
+/* Resultado */
 #resultado-container {
-    background-color: #e3f2fd;
-    padding: 20px;
-    border-radius: 10px;
+    background-color: #e3f2fd; /* Azul muy clarito */
+    padding: 25px;
+    border-radius: 12px;
     border: 1px solid #bbdefb;
 }
 
 .titulo-proximo {
     margin: 0;
-    font-size: 14px;
+    font-size: 13px;
     color: #666;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: bold;
 }
 
 #hora-grande {
-    font-size: 60px;
+    font-size: 65px;
     font-weight: 800;
     color: #005a9c;
-    margin: 10px 0;
+    margin: 15px 0;
+    line-height: 1;
 }
 
 #info-extra {
-    font-size: 14px;
-    color: #888;
+    font-size: 15px;
+    color: #555;
     margin: 0;
-}
-
-/* Mapa más pequeño */
-#mapa {
-    height: 300px;
-    width: 100%;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-}
-
-hr {
-    border: 0;
-    border-top: 1px solid #ddd;
-    margin: 30px 0;
+    font-weight: 500;
 }
