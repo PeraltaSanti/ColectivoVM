@@ -1,47 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. CONFIGURACIÓN DEL MAPA ---
-    const latInicial = -33.651248;
-    const lonInicial = -65.450809;
-    const zoomInicial = 13;
-    const mapa = L.map('mapa').setView([latInicial, lonInicial], zoomInicial);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(mapa);
-
-    const kmlLayer = omnivore.kml('recorrido.kml')
-        .on('ready', () => {
-            mapa.fitBounds(kmlLayer.getBounds());
-        })
-        .addTo(mapa);
-
-    // --- 2. LÓGICA INTELIGENTE DE HORARIOS ---
-    
+    // Referencias a los elementos de la pantalla
     const selector = document.getElementById('selector-parada');
     const displayHora = document.getElementById('hora-grande');
     const displayInfo = document.getElementById('info-extra');
     
     let datosHorarios = null;
 
-    // Cargar el JSON
+    // --- 1. CARGAR DATOS ---
     async function cargarDatos() {
         try {
+            // Intentamos cargar el archivo
             const respuesta = await fetch('horarios.json');
+            
+            if (!respuesta.ok) {
+                throw new Error("No se pudo encontrar el archivo horarios.json");
+            }
+
             datosHorarios = await respuesta.json();
             
-            // Llenar el selector con las paradas (usamos las del primer viaje de lunes)
-            const paradas = Object.keys(datosHorarios.lunes_a_viernes[0]);
-            llenarSelector(paradas);
+            // Verificamos que existan datos de Lunes a Viernes para sacar los nombres
+            if (datosHorarios.lunes_a_viernes && datosHorarios.lunes_a_viernes.length > 0) {
+                // Obtenemos los nombres de las columnas (las paradas) del primer viaje
+                const paradas = Object.keys(datosHorarios.lunes_a_viernes[0]);
+                llenarSelector(paradas);
+            } else {
+                displayInfo.textContent = "El archivo de horarios parece estar vacío.";
+            }
             
         } catch (error) {
-            console.error('Error cargando horarios:', error);
-            displayInfo.textContent = "Error al cargar datos.";
+            console.error('Error:', error);
+            selector.innerHTML = '<option>Error al cargar</option>';
+            displayInfo.textContent = "Asegúrate de ejecutar python -m http.server";
         }
     }
 
+    // --- 2. LLENAR LA LISTA DESPLEGABLE ---
     function llenarSelector(paradas) {
-        selector.innerHTML = '<option value="" disabled selected>Selecciona una parada...</option>';
+        // Limpiamos el "Cargando..."
+        selector.innerHTML = '<option value="" disabled selected>Toca aquí para elegir...</option>';
+        
         paradas.forEach(parada => {
             const option = document.createElement('option');
             option.value = parada;
@@ -50,20 +48,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- EL CEREBRO DE LA APP ---
+    // --- 3. CEREBRO: BUSCAR EL HORARIO ---
     function buscarProximoColectivo() {
         const paradaSeleccionada = selector.value;
+        
+        // Si no hay datos o no eligió parada, no hacemos nada
         if (!paradaSeleccionada || !datosHorarios) return;
 
         const ahora = new Date();
-        const diaSemana = ahora.getDay(); // 0=Domingo, 1=Lunes, ... 6=Sábado
+        const diaSemana = ahora.getDay(); // 0=Domingo, 1=Lunes... 6=Sábado
         const horaActual = ahora.getHours();
         const minutosActuales = ahora.getMinutes();
         
-        // Convertir la hora actual a minutos totales (ej: 08:17 = 497 minutos)
+        // Convertimos la hora actual a "minutos totales" para comparar fácil
+        // Ejemplo: 01:00 AM = 60 minutos.
         const minutosTotalesAhora = (horaActual * 60) + minutosActuales;
 
-        // Determinar qué lista usar según el día
+        // Elegimos la lista correcta según el día
         let listaViajes = [];
         let nombreDia = "";
 
@@ -80,47 +81,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let proximoHorario = null;
 
-        // Recorrer todos los viajes del día
+        // Buscamos en la lista
         for (let viaje of listaViajes) {
             const horarioTexto = viaje[paradaSeleccionada]; // Ej: "08:27" o null
 
-            if (horarioTexto) {
-                // Convertir horario del JSON a minutos
-                const [h, m] = horarioTexto.split(':').map(Number);
+            if (horarioTexto && horarioTexto !== "---") {
+                // Separamos hora y minutos (Ej: "08:27" -> h=8, m=27)
+                const [hStr, mStr] = horarioTexto.split(':');
+                const h = parseInt(hStr);
+                const m = parseInt(mStr);
+
                 let minutosViaje = (h * 60) + m;
 
-                // Caso especial: Horarios de madrugada (ej: 00:15)
-                // Si el horario es menor a 4:00 AM, asumimos que es del día siguiente (sumamos 24hs)
-                if (h < 4) minutosViaje += 24 * 60;
+                // TRUCO PARA LA MADRUGADA:
+                // Si el colectivo pasa a las 00:15, eso es numéricamente menor que las 23:00.
+                // Si el horario es menor a las 4 AM, le sumamos 24 horas (1440 minutos) 
+                // para que la matemática funcione y lo considere "después" de la noche actual.
+                if (h < 4) {
+                    minutosViaje += 24 * 60;
+                }
 
-                // Si este colectivo pasa DESPUÉS de la hora actual...
+                // Si este colectivo pasa DESPUÉS de ahora...
                 if (minutosViaje > minutosTotalesAhora) {
                     proximoHorario = horarioTexto;
-                    break; // ¡Lo encontramos! Cortamos el bucle.
+                    break; // ¡Encontrado! Dejamos de buscar.
                 }
             }
         }
 
-        // Mostrar resultado
+        // Mostrar resultado en pantalla
         if (proximoHorario) {
             displayHora.textContent = proximoHorario;
-            displayInfo.textContent = `Horario para hoy (${nombreDia})`;
-            displayHora.style.color = "#005a9c"; // Azul
+            displayInfo.textContent = `Próximo servicio (${nombreDia})`;
+            displayHora.style.color = "#005a9c";
         } else {
             displayHora.textContent = "---";
             displayInfo.textContent = `No hay más servicios por hoy (${nombreDia})`;
-            displayHora.style.color = "#d32f2f"; // Rojo
+            displayHora.style.color = "#d32f2f";
         }
     }
 
-    // Evento: Cuando el usuario cambia la parada en el menú
+    // Escuchar cuando el usuario cambia la opción
     selector.addEventListener('change', buscarProximoColectivo);
 
-    // Opcional: Actualizar automáticamente cada 30 segundos por si cambia la hora
+    // Actualizar cada 30 segundos por si cambia la hora mientras mira la pantalla
     setInterval(() => {
         if(selector.value) buscarProximoColectivo();
     }, 30000);
 
-    // Iniciar
+    // ¡Arrancar!
     cargarDatos();
 });
