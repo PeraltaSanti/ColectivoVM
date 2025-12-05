@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios Colectivo</title>
+    
+    <link rel="stylesheet" href="leaflet.css" />
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Mi App de Transporte</h1>
+    </header>
+
+    <main>
+        <h2>Recorrido (Línea A)</h2>
+        <p>El mapa muestra el recorrido y las paradas de la Línea A (en color azul/marrón). Puedes hacer clic en las paradas.</p>
+        
+        <div id="mapa"></div>
+
+        <h2>Horarios (Línea A)</h2>
+        
+        <div class="controles-horarios">
+            <button id="btn-lav" class="activo">Lunes a Viernes</button>
+            <button id="btn-sab">Sábados</button>
+            <button id="btn-dom">Domingos</button>
+        </div>
+        
+        <div id="tabla-horarios-container">
+            <table id="tabla-horarios">
+                </table>
+        </div>
+    </main>
+
+    <script src="leaflet.js"></script>
+    <script src="leaflet-omnivore.min.js"></script>
+    
+    <script src="app.js"></script>
+
+</body>
+</html>

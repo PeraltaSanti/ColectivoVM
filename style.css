@@ -1,0 +1,97 @@
+/* Estilos generales */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #005a9c; /* Un azul "transporte" */
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: white;
+    border-radius: 8px;
+}
+
+/* Estilo del Mapa */
+#mapa {
+    height: 450px; /* Puedes ajustar esta altura */
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Estilos de Horarios */
+.controles-horarios {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.controles-horarios button {
+    background-color: #e0e0e0;
+    border: none;
+    padding: 10px 15px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.controles-horarios button:hover {
+    background-color: #ccc;
+}
+
+.controles-horarios button.activo {
+    background-color: #005a9c;
+    color: white;
+    font-weight: bold;
+}
+
+/* Estilos de la Tabla */
+#tabla-horarios-container {
+    width: 100%;
+    overflow-x: auto; /* Permite scroll horizontal en móviles */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+#tabla-horarios {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#tabla-horarios th,
+#tabla-horarios td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 14px;
+    text-align: center;
+    font-size: 14px;
+    white-space: nowrap; /* Evita que las horas se partan */
+}
+
+#tabla-horarios th {
+    background-color: #f2f2f2;
+    position: sticky; /* Fija la cabecera en scroll */
+    top: 0;
+    z-index: 10;
+}
+
+#tabla-horarios tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#tabla-horarios tbody tr:hover {
+    background-color: #f1f1f1;
+}
