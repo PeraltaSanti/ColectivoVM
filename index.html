@@ -12,32 +12,31 @@
 <body>
 
     <header>
-        <h1>Mi App de Transporte</h1>
+        <h1>Mi Colectivo (Línea A)</h1>
     </header>
 
     <main>
-        <h2>Recorrido (Línea A)</h2>
-        <p>El mapa muestra el recorrido y las paradas de la Línea A (en color azul/marrón). Puedes hacer clic en las paradas.</p>
-        
-        <div id="mapa"></div>
+        <div class="buscador-container">
+            <label for="selector-parada">¿Dónde estás?</label>
+            <select id="selector-parada">
+                <option value="" disabled selected>Cargando paradas...</option>
+            </select>
 
-        <h2>Horarios (Línea A)</h2>
-        
-        <div class="controles-horarios">
-            <button id="btn-lav" class="activo">Lunes a Viernes</button>
-            <button id="btn-sab">Sábados</button>
-            <button id="btn-dom">Domingos</button>
+            <div id="resultado-container">
+                <p class="titulo-proximo">Tu próximo colectivo pasa a las:</p>
+                <div id="hora-grande">--:--</div>
+                <p id="info-extra">Selecciona una parada</p>
+            </div>
         </div>
-        
-        <div id="tabla-horarios-container">
-            <table id="tabla-horarios">
-                </table>
-        </div>
+
+        <hr>
+
+        <h3>Referencia de Mapa</h3>
+        <div id="mapa"></div>
     </main>
 
     <script src="leaflet.js"></script>
     <script src="leaflet-omnivore.min.js"></script>
-    
     <script src="app.js"></script>
 
 </body>
